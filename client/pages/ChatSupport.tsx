@@ -307,28 +307,15 @@ export default function ChatSupport() {
               </p>
             </div>
           </div>
-          <Button
-            onClick={handleMarkAsResolved}
-            disabled={ticketStatus === "closed"}
-            className={cn(
-              "font-semibold transition-all duration-200 min-w-[160px]",
-              ticketStatus === "closed"
-                ? "bg-gray-200 text-gray-600 cursor-not-allowed"
-                : "bg-green-600 hover:bg-green-700 text-white"
-            )}
-          >
-            {ticketStatus === "closed" ? (
-              <>
-                <CheckCircle className="w-4 h-4 mr-2" />
-                Resolved
-              </>
-            ) : (
-              <>
-                <CheckCircle className="w-4 h-4 mr-2" />
-                Mark as Resolved
-              </>
-            )}
-          </Button>
+          {ticketStatus !== "closed" && (
+            <Button
+              onClick={handleMarkAsResolved}
+              className="font-semibold transition-all duration-200 bg-green-600 hover:bg-green-700 text-white"
+            >
+              <CheckCircle className="w-4 h-4 mr-2" />
+              Close Ticket
+            </Button>
+          )}
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
