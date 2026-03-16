@@ -12,6 +12,7 @@ import { templateLayoutMap } from "@/components/predefine-email-templates/templa
 interface BuilderCanvasProps {
   onBack?: () => void;
   templateId?: string;
+  initialLayout?: BuilderComponent[];
 }
 
 const DEFAULT_LAYOUT: BuilderComponent[] = [
@@ -50,13 +51,15 @@ const DEFAULT_LAYOUT: BuilderComponent[] = [
   },
 ];
 
-export const BuilderCanvas: React.FC<BuilderCanvasProps> = ({ onBack, templateId }) => {
-  const initialLayout = templateId
-    ? templateLayoutMap[templateId] || DEFAULT_LAYOUT
-    : DEFAULT_LAYOUT;
+export const BuilderCanvas: React.FC<BuilderCanvasProps> = ({ onBack, templateId, initialLayout }) => {
+  const layoutConfig = initialLayout
+    ? initialLayout
+    : templateId
+      ? templateLayoutMap[templateId] || DEFAULT_LAYOUT
+      : DEFAULT_LAYOUT;
 
   const { layout, addComponent, moveComponent, updateComponent, removeComponent } = useLayout(
-    initialLayout,
+    layoutConfig,
   );
 
   const [{ isOver, canDrop }, drop] = useDrop({

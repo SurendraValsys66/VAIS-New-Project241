@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useCallback } from "react";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import { BuilderCanvas } from "@/components/builder/Canvas";
+import { AIBuilder } from "@/components/ai-builder/AIBuilder";
+import { convertAILayoutToBuilderComponents } from "@/components/ai-builder/layoutConverter";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -14,14 +16,15 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Layers, Plus, Trash2, Edit2, Layout, Calendar, Clock, Search, Zap } from "lucide-react";
+import { Layers, Plus, Trash2, Edit2, Layout, Calendar, Clock, Search, Zap, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { PREDEFINED_TEMPLATES } from "@/components/predefine-email-templates";
 import { OnlineMarketingConferenceTemplate } from "@/components/predefine-email-templates";
+import { BuilderComponent } from "@/types/builder";
 
-type View = "list" | "editor" | "template-preview" | "template-list";
+type View = "list" | "editor" | "template-preview" | "template-list" | "ai-builder";
 
 interface PageData {
   id: string;
@@ -35,6 +38,7 @@ export default function LandingPages() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
   const [templateInEditor, setTemplateInEditor] = useState<string | null>(null);
+  const [aiGeneratedLayout, setAIGeneratedLayout] = useState<BuilderComponent[] | null>(null);
   const [pages, setPages] = useState<PageData[]>([
     { id: "1", name: "Modern Hero Page", updatedAt: "2024-03-20T10:00:00Z" },
     { id: "2", name: "SaaS Product Landing", updatedAt: "2024-03-19T15:30:00Z" },
@@ -65,16 +69,41 @@ export default function LandingPages() {
     setView("editor");
   };
 
+  const handleOpenAIBuilder = () => {
+    setView("ai-builder");
+  };
+
+  const handleAIGenerateComplete = (aiLayout: any) => {
+    // Convert the AI-generated layout to builder format
+    const builderComponents = convertAILayoutToBuilderComponents(aiLayout);
+    setAIGeneratedLayout(builderComponents);
+    // Navigate to the editor
+    setView("editor");
+  };
+
   const handleBack = () => {
     setView("list");
     setSelectedTemplate(null);
     setTemplateInEditor(null);
   };
 
+  if (view === "ai-builder") {
+    return (
+      <AIBuilder
+        onBack={handleBack}
+        onGenerateComplete={handleAIGenerateComplete}
+      />
+    );
+  }
+
   if (view === "editor") {
     return (
       <DndProvider backend={HTML5Backend}>
-        <BuilderCanvas onBack={handleBack} templateId={templateInEditor || undefined} />
+        <BuilderCanvas
+          onBack={handleBack}
+          templateId={templateInEditor || undefined}
+          initialLayout={aiGeneratedLayout || undefined}
+        />
       </DndProvider>
     );
   }
@@ -211,7 +240,14 @@ export default function LandingPages() {
             </h1>
             <p className="text-gray-500 mt-1">Design, build and publish high-converting pages in minutes.</p>
           </div>
-          <div className="flex gap-3">
+          <div className="flex gap-3 flex-wrap justify-end">
+            <Button
+              onClick={handleOpenAIBuilder}
+              className="px-6 py-6 rounded-2xl shadow-md hover:shadow-lg transition-all font-bold text-base group bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white"
+            >
+              <Sparkles className="w-5 h-5 mr-2 group-hover:scale-110 transition-transform" />
+              AI Builder
+            </Button>
             <Button
               onClick={handleViewTemplates}
               variant="outline"
