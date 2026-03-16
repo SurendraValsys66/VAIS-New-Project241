@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { ArrowLeft, Sparkles, Loader, AlertCircle, CheckCircle } from "lucide-react";
+import { ArrowLeft, Sparkles, Loader, AlertCircle, CheckCircle, Send } from "lucide-react";
 import { cn } from "@/lib/utils";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 
@@ -215,16 +215,16 @@ export const AIBuilder: React.FC<AIBuilderProps> = ({ onBack, onGenerateComplete
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
               disabled={isGenerating}
-              rows={3}
-              className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:ring-valasys-orange focus:border-valasys-orange text-base resize-none pr-32"
+              rows={4}
+              className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:ring-valasys-orange focus:border-valasys-orange text-base resize-none pr-40"
             />
-            {/* Model Dropdown at Bottom Right */}
-            <div className="absolute bottom-3 right-3">
+            {/* Model Dropdown and Send Button at Bottom Right */}
+            <div className="absolute bottom-3 right-3 flex gap-2 items-center">
               <select
                 value={selectedModel}
                 onChange={(e) => setSelectedModel(e.target.value)}
                 disabled={isGenerating}
-                className="px-3 py-1 rounded-md border border-gray-200 bg-white text-sm font-medium text-gray-700 hover:border-valasys-orange focus:outline-none focus:ring-2 focus:ring-valasys-orange cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-3 py-1 rounded-md bg-white text-sm font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-valasys-orange cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {AI_MODELS.map((model) => (
                   <option key={model} value={model}>
@@ -232,6 +232,24 @@ export const AIBuilder: React.FC<AIBuilderProps> = ({ onBack, onGenerateComplete
                   </option>
                 ))}
               </select>
+              <Button
+                onClick={handleGenerateLayout}
+                disabled={isGenerating || !prompt.trim()}
+                size="icon"
+                className={cn(
+                  "w-8 h-8 rounded-md transition-all",
+                  isGenerating || !prompt.trim()
+                    ? "bg-gray-200 text-gray-600 cursor-not-allowed"
+                    : "bg-valasys-orange hover:bg-valasys-orange/90 text-white"
+                )}
+                title="Send"
+              >
+                {isGenerating ? (
+                  <Loader className="w-4 h-4 animate-spin" />
+                ) : (
+                  <Send className="w-4 h-4" />
+                )}
+              </Button>
             </div>
           </div>
         </div>
