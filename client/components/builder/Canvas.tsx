@@ -32,9 +32,9 @@ export const BuilderCanvas: React.FC<BuilderCanvasProps> = ({ onBack, templateId
 
   const [{ isOver, canDrop }, drop] = useDrop({
     accept: DRAG_TYPES.COMPONENT,
-    canDrop: (item: any) => {
-      // Root only accepts sections or reordering root components
-      return item.type === "section";
+    canDrop: () => {
+      // Root accepts all component types
+      return true;
     },
     drop: (item: any, monitor) => {
       if (monitor.didDrop()) return;
