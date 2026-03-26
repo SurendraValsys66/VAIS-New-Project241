@@ -93,11 +93,16 @@ const ImageUploadInput: React.FC<ImageUploadInputProps> = ({
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
+    console.log("Image file selected:", file?.name);
     if (file) {
       const reader = new FileReader();
       reader.onload = (event) => {
         const dataUrl = event.target?.result as string;
+        console.log("FileReader onload called, dataUrl length:", dataUrl?.length);
         onChange(dataUrl);
+      };
+      reader.onerror = () => {
+        console.error("FileReader error");
       };
       reader.readAsDataURL(file);
     }
@@ -541,12 +546,13 @@ export const EnhancedSettingsPanel: React.FC<EnhancedSettingsPanelProps> = ({
               <ImageUploadInput
                 label="Section Image"
                 value={props.imageUrl || ""}
-                onChange={(value) =>
+                onChange={(value) => {
+                  console.log("About block image onChange called, imageUrl:", value?.substring?.(0, 50));
                   onBlockUpdate({
                     ...block,
                     properties: { ...props, imageUrl: value },
-                  })
-                }
+                  });
+                }}
               />
             </div>
             <div>
@@ -850,6 +856,9 @@ export const EnhancedSettingsPanel: React.FC<EnhancedSettingsPanelProps> = ({
             </TabsTrigger>
             <TabsTrigger value="spacing" className="rounded-none border-b-2">
               Spacing
+            </TabsTrigger>
+            <TabsTrigger value="visibility" className="rounded-none border-b-2">
+              Visibility
             </TabsTrigger>
           </TabsList>
 
@@ -1718,6 +1727,192 @@ export const EnhancedSettingsPanel: React.FC<EnhancedSettingsPanelProps> = ({
                   />
                 </div>
               )}
+            </div>
+          </TabsContent>
+
+          {/* Visibility Tab */}
+          <TabsContent value="visibility" className="p-4 space-y-4">
+            {/* Content Visibility Section */}
+            <div>
+              <div className="mb-4">
+                <Label className="text-xs font-semibold text-gray-700 block mb-3">
+                  Display or hide content based on device type
+                </Label>
+
+                <p className="text-xs text-gray-600 mb-3">Show on:</p>
+
+                {/* Device Options */}
+                <div className="flex flex-wrap gap-2 mb-4">
+                  <button
+                    onClick={() =>
+                      onBlockUpdate({
+                        ...block,
+                        properties: { ...props, showOn: "all-devices" },
+                      })
+                    }
+                    className={`px-3 py-1.5 rounded text-xs font-medium border transition-all ${
+                      (props.showOn === "all-devices" || !props.showOn)
+                        ? "bg-valasys-orange text-white border-valasys-orange"
+                        : "border-gray-300 text-gray-700 hover:border-gray-400"
+                    }`}
+                  >
+                    All devices
+                  </button>
+                  <button
+                    onClick={() =>
+                      onBlockUpdate({
+                        ...block,
+                        properties: { ...props, showOn: "desktop-only" },
+                      })
+                    }
+                    className={`px-3 py-1.5 rounded text-xs font-medium border transition-all ${
+                      props.showOn === "desktop-only"
+                        ? "bg-valasys-orange text-white border-valasys-orange"
+                        : "border-gray-300 text-gray-700 hover:border-gray-400"
+                    }`}
+                  >
+                    Only on desktop
+                  </button>
+                  <button
+                    onClick={() =>
+                      onBlockUpdate({
+                        ...block,
+                        properties: { ...props, showOn: "mobile-only" },
+                      })
+                    }
+                    className={`px-3 py-1.5 rounded text-xs font-medium border transition-all ${
+                      props.showOn === "mobile-only"
+                        ? "bg-valasys-orange text-white border-valasys-orange"
+                        : "border-gray-300 text-gray-700 hover:border-gray-400"
+                    }`}
+                  >
+                    Only on mobile
+                  </button>
+                  <button
+                    onClick={() =>
+                      onBlockUpdate({
+                        ...block,
+                        properties: { ...props, showOn: "tablet-only" },
+                      })
+                    }
+                    className={`px-3 py-1.5 rounded text-xs font-medium border transition-all ${
+                      props.showOn === "tablet-only"
+                        ? "bg-valasys-orange text-white border-valasys-orange"
+                        : "border-gray-300 text-gray-700 hover:border-gray-400"
+                    }`}
+                  >
+                    Only on tablet
+                  </button>
+                </div>
+              </div>
+
+              {/* Display Conditions Section */}
+              <div className="border-t pt-4">
+                <div className="flex items-center justify-between mb-3">
+                  <Label className="text-xs font-semibold text-gray-700">
+                    Display conditions
+                  </Label>
+                  <button
+                    onClick={() => {
+                      const conditions = props.displayConditions || [];
+                      const newCondition = {
+                        id: `condition-${Date.now()}`,
+                        type: "custom" as const,
+                        operator: "and" as const,
+                        value: "",
+                      };
+                      onBlockUpdate({
+                        ...block,
+                        properties: {
+                          ...props,
+                          displayConditions: [...conditions, newCondition],
+                        },
+                      });
+                    }}
+                    className="text-xs font-medium text-valasys-orange hover:text-orange-600 flex items-center gap-1"
+                  >
+                    + Add condition
+                  </button>
+                </div>
+
+                {/* Display Conditions List */}
+                {props.displayConditions && props.displayConditions.length > 0 && (
+                  <div className="space-y-2">
+                    {props.displayConditions.map(
+                      (condition: any, index: number) => (
+                        <div
+                          key={condition.id}
+                          className="flex items-center gap-2 p-2 bg-gray-50 rounded border border-gray-200"
+                        >
+                          {index > 0 && (
+                            <Select
+                              value={condition.operator || "and"}
+                              onValueChange={(value) => {
+                                const updatedConditions = [
+                                  ...props.displayConditions,
+                                ];
+                                updatedConditions[index].operator = value;
+                                onBlockUpdate({
+                                  ...block,
+                                  properties: {
+                                    ...props,
+                                    displayConditions: updatedConditions,
+                                  },
+                                });
+                              }}
+                            >
+                              <SelectTrigger className="w-16 h-8 text-xs">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="and">AND</SelectItem>
+                                <SelectItem value="or">OR</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          )}
+                          <Input
+                            type="text"
+                            value={condition.value || ""}
+                            onChange={(e) => {
+                              const updatedConditions = [
+                                ...props.displayConditions,
+                              ];
+                              updatedConditions[index].value = e.target.value;
+                              onBlockUpdate({
+                                ...block,
+                                properties: {
+                                  ...props,
+                                  displayConditions: updatedConditions,
+                                },
+                              });
+                            }}
+                            placeholder="Enter condition..."
+                            className="flex-1 h-8 text-xs"
+                          />
+                          <button
+                            onClick={() => {
+                              const updatedConditions =
+                                props.displayConditions.filter(
+                                  (_: any, i: number) => i !== index
+                                );
+                              onBlockUpdate({
+                                ...block,
+                                properties: {
+                                  ...props,
+                                  displayConditions: updatedConditions,
+                                },
+                              });
+                            }}
+                            className="text-red-600 hover:text-red-700 text-xs font-medium"
+                          >
+                            Remove
+                          </button>
+                        </div>
+                      )
+                    )}
+                  </div>
+                )}
+              </div>
             </div>
           </TabsContent>
         </Tabs>

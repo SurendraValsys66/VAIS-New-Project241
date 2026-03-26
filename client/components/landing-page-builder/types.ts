@@ -1,3 +1,10 @@
+export interface DisplayCondition {
+  id: string;
+  type: "device" | "custom";
+  operator?: "and" | "or";
+  value?: string;
+}
+
 export interface LandingPageBlockProperties extends Record<string, any> {
   // Common styling properties
   backgroundColor?: string;
@@ -34,6 +41,12 @@ export interface LandingPageBlockProperties extends Record<string, any> {
   width?: string;
   // Gap (for flex/grid)
   gap?: string;
+  // Visibility
+  showOn?: "all-devices" | "desktop-only" | "mobile-only" | "tablet-only";
+  displayConditions?: DisplayCondition[];
+  hideOnMobile?: boolean;
+  hideOnTablet?: boolean;
+  hideOnDesktop?: boolean;
 }
 
 export interface LandingPageBlock {
