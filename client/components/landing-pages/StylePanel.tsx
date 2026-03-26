@@ -255,15 +255,16 @@ export const StylePanel: React.FC<StylePanelProps> = ({ onClose }) => {
             <div className="px-4 py-4 space-y-4 bg-gray-50">
               {/* Padding */}
               <div>
-                <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center justify-between mb-3">
                   <label className="text-xs font-semibold text-gray-600">Padding</label>
-                  <label className="flex items-center gap-2 text-xs">
+                  <label className="flex items-center gap-2 text-xs text-gray-600">
                     <input
                       type="checkbox"
                       checked={linkPaddingValues}
                       onChange={(e) => setLinkPaddingValues(e.target.checked)}
+                      className="cursor-pointer"
                     />
-                    <span>Group values</span>
+                    <span>Group sides</span>
                   </label>
                 </div>
                 {linkPaddingValues ? (
@@ -279,45 +280,64 @@ export const StylePanel: React.FC<StylePanelProps> = ({ onClose }) => {
                   />
                 ) : (
                   <div className="space-y-2">
-                    <InputGroup
-                      label="Top"
-                      value={styles.paddingTop}
-                      onChange={(val: string) => updateStyle("paddingTop", val)}
-                      unit="px"
-                    />
-                    <InputGroup
-                      label="Right"
-                      value={styles.paddingRight}
-                      onChange={(val: string) => updateStyle("paddingRight", val)}
-                      unit="px"
-                    />
-                    <InputGroup
-                      label="Bottom"
-                      value={styles.paddingBottom}
-                      onChange={(val: string) => updateStyle("paddingBottom", val)}
-                      unit="px"
-                    />
-                    <InputGroup
-                      label="Left"
-                      value={styles.paddingLeft}
-                      onChange={(val: string) => updateStyle("paddingLeft", val)}
-                      unit="px"
-                    />
+                    <div className="grid grid-cols-2 gap-2">
+                      <div>
+                        <div className="text-xs text-gray-500 mb-1 flex items-center gap-1">
+                          <span className="text-xs">⬆</span> Top
+                        </div>
+                        <InputGroup
+                          value={styles.paddingTop}
+                          onChange={(val: string) => updateStyle("paddingTop", val)}
+                          unit="px"
+                        />
+                      </div>
+                      <div>
+                        <div className="text-xs text-gray-500 mb-1 flex items-center gap-1">
+                          <span className="text-xs">➡</span> Right
+                        </div>
+                        <InputGroup
+                          value={styles.paddingRight}
+                          onChange={(val: string) => updateStyle("paddingRight", val)}
+                          unit="px"
+                        />
+                      </div>
+                      <div>
+                        <div className="text-xs text-gray-500 mb-1 flex items-center gap-1">
+                          <span className="text-xs">⬇</span> Bottom
+                        </div>
+                        <InputGroup
+                          value={styles.paddingBottom}
+                          onChange={(val: string) => updateStyle("paddingBottom", val)}
+                          unit="px"
+                        />
+                      </div>
+                      <div>
+                        <div className="text-xs text-gray-500 mb-1 flex items-center gap-1">
+                          <span className="text-xs">⬅</span> Left
+                        </div>
+                        <InputGroup
+                          value={styles.paddingLeft}
+                          onChange={(val: string) => updateStyle("paddingLeft", val)}
+                          unit="px"
+                        />
+                      </div>
+                    </div>
                   </div>
                 )}
               </div>
 
               {/* Margin */}
               <div className="border-t pt-4">
-                <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center justify-between mb-3">
                   <label className="text-xs font-semibold text-gray-600">Margin</label>
-                  <label className="flex items-center gap-2 text-xs">
+                  <label className="flex items-center gap-2 text-xs text-gray-600">
                     <input
                       type="checkbox"
                       checked={linkMarginValues}
                       onChange={(e) => setLinkMarginValues(e.target.checked)}
+                      className="cursor-pointer"
                     />
-                    <span>Group values</span>
+                    <span>Group sides</span>
                   </label>
                 </div>
                 {linkMarginValues ? (
@@ -333,26 +353,48 @@ export const StylePanel: React.FC<StylePanelProps> = ({ onClose }) => {
                   />
                 ) : (
                   <div className="space-y-2">
-                    <InputGroup
-                      value={styles.marginTop}
-                      onChange={(val: string) => updateStyle("marginTop", val)}
-                      unit="px"
-                    />
-                    <InputGroup
-                      value={styles.marginRight}
-                      onChange={(val: string) => updateStyle("marginRight", val)}
-                      unit="px"
-                    />
-                    <InputGroup
-                      value={styles.marginBottom}
-                      onChange={(val: string) => updateStyle("marginBottom", val)}
-                      unit="px"
-                    />
-                    <InputGroup
-                      value={styles.marginLeft}
-                      onChange={(val: string) => updateStyle("marginLeft", val)}
-                      unit="px"
-                    />
+                    <div className="grid grid-cols-2 gap-2">
+                      <div>
+                        <div className="text-xs text-gray-500 mb-1 flex items-center gap-1">
+                          <span className="text-xs">⬆</span> Top
+                        </div>
+                        <InputGroup
+                          value={styles.marginTop}
+                          onChange={(val: string) => updateStyle("marginTop", val)}
+                          unit="px"
+                        />
+                      </div>
+                      <div>
+                        <div className="text-xs text-gray-500 mb-1 flex items-center gap-1">
+                          <span className="text-xs">➡</span> Right
+                        </div>
+                        <InputGroup
+                          value={styles.marginRight}
+                          onChange={(val: string) => updateStyle("marginRight", val)}
+                          unit="px"
+                        />
+                      </div>
+                      <div>
+                        <div className="text-xs text-gray-500 mb-1 flex items-center gap-1">
+                          <span className="text-xs">⬇</span> Bottom
+                        </div>
+                        <InputGroup
+                          value={styles.marginBottom}
+                          onChange={(val: string) => updateStyle("marginBottom", val)}
+                          unit="px"
+                        />
+                      </div>
+                      <div>
+                        <div className="text-xs text-gray-500 mb-1 flex items-center gap-1">
+                          <span className="text-xs">⬅</span> Left
+                        </div>
+                        <InputGroup
+                          value={styles.marginLeft}
+                          onChange={(val: string) => updateStyle("marginLeft", val)}
+                          unit="px"
+                        />
+                      </div>
+                    </div>
                   </div>
                 )}
               </div>
