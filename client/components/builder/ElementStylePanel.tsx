@@ -128,58 +128,38 @@ export const ElementStylePanel: React.FC<ElementStylePanelProps> = ({
     onChange: (value: string) => void;
     type?: string;
     placeholder?: string;
-  }) => {
-    const inputRef = React.useRef<HTMLInputElement>(null);
-
-    const handleNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      let newValue = e.target.value;
-      // Remove leading zeros unless it's just "0"
-      if (newValue.startsWith("0") && newValue.length > 1 && newValue[1] !== ".") {
-        newValue = newValue.replace(/^0+/, "");
-      }
-      onChange(newValue);
-    };
-
-    const handleNumberFocus = (e: React.FocusEvent<HTMLInputElement>) => {
-      // Select all text when focused so new input replaces it
-      e.target.select();
-    };
-
-    return (
-      <div className="space-y-2 px-4 py-3 border-b border-gray-100">
-        <label className="text-xs font-bold text-gray-700">{label}</label>
-        {type === "color" ? (
-          <div className="flex gap-2 items-center">
-            <input
-              type="color"
-              value={value}
-              onChange={(e) => onChange(e.target.value)}
-              className="w-12 h-10 rounded-lg border border-gray-200 cursor-pointer"
-            />
-            <input
-              type="text"
-              value={value}
-              onChange={(e) => onChange(e.target.value)}
-              className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-xs font-mono"
-            />
-          </div>
-        ) : (
-          <div className="flex items-center gap-2">
-            <Input
-              ref={inputRef}
-              type={type}
-              value={value}
-              onChange={type === "number" ? handleNumberChange : (e) => onChange(e.target.value)}
-              onFocus={type === "number" ? handleNumberFocus : undefined}
-              placeholder={placeholder}
-              className="h-9 text-sm"
-            />
-            {type === "number" && <span className="text-xs text-gray-500">px</span>}
-          </div>
-        )}
-      </div>
-    );
-  };
+  }) => (
+    <div className="space-y-2 px-4 py-3 border-b border-gray-100">
+      <label className="text-xs font-bold text-gray-700">{label}</label>
+      {type === "color" ? (
+        <div className="flex gap-2 items-center">
+          <input
+            type="color"
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+            className="w-12 h-10 rounded-lg border border-gray-200 cursor-pointer"
+          />
+          <input
+            type="text"
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+            className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-xs font-mono"
+          />
+        </div>
+      ) : (
+        <div className="flex items-center gap-2">
+          <Input
+            type={type}
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+            placeholder={placeholder}
+            className="h-9 text-sm"
+          />
+          {type === "number" && <span className="text-xs text-gray-500">px</span>}
+        </div>
+      )}
+    </div>
+  );
 
   if (!component) {
     return (
