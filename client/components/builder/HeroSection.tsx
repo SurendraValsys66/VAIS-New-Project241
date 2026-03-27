@@ -31,46 +31,25 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   const [editingElementId, setEditingElementId] = React.useState<string | null>(null);
   const [clipboardData, setClipboardData] = React.useState<{ elementId: string; content: string } | null>(null);
 
-  const heroDefaults = {
-    badge: "✨ New Release",
-    heading: "Build your vision faster than ever.",
-    paragraph: "The world's most advanced landing page builder. Drag, drop, and launch in minutes, not days.",
-  } as const;
-
-  const getHeroContent = (elementId: "badge" | "heading" | "paragraph") => {
-    const valueMap = {
-      badge: component.heroBadgeText,
-      heading: component.heroHeadingText,
-      paragraph: component.heroDescriptionText,
-    } as const;
-
-    const value = valueMap[elementId];
-    if (editingElementId === elementId && !value) {
-      return "";
-    }
-
-    return value || heroDefaults[elementId];
-  };
-
   // Define hero elements
   const heroElements: HeroElement[] = [
     {
       id: "badge",
       type: "badge",
       label: "Badge",
-      content: getHeroContent("badge"),
+      content: component.heroBadgeText || "✨ New Release",
     },
     {
       id: "heading",
       type: "heading",
       label: "Heading",
-      content: getHeroContent("heading"),
+      content: component.heroHeadingText || "Build your vision faster than ever.",
     },
     {
       id: "paragraph",
       type: "paragraph",
       label: "Paragraph",
-      content: getHeroContent("paragraph"),
+      content: component.heroDescriptionText || "The world's most advanced landing page builder. Drag, drop, and launch in minutes, not days.",
     },
     {
       id: "buttons",
@@ -119,7 +98,20 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
     }
   };
 
+  const handleEditableInput = (
+    elementId: "badge" | "heading" | "paragraph",
+    event: React.FormEvent<HTMLElement>,
+  ) => {
+    handleElementUpdate(elementId, event.currentTarget.textContent || "");
+  };
+
   const handleEditableFocus = (event: React.FocusEvent<HTMLElement>) => {
+    const selection = window.getSelection();
+    const range = document.createRange();
+
+    range.selectNodeContents(event.currentTarget);
+    selection?.removeAllRanges();
+    selection?.addRange(range);
     setEditingElementId(event.currentTarget.dataset.elementId || null);
   };
 
@@ -283,6 +275,9 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
               <span
                 contentEditable={isSelected}
                 suppressContentEditableWarning
+                onInput={(e) => {
+                  handleEditableInput("badge", e);
+                }}
                 data-element-id={element.id}
                 onFocus={handleEditableFocus}
                 onBlur={(e) => {
@@ -293,10 +288,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                 onClick={(e) => {
                   if (isSelected) e.stopPropagation();
                 }}
-                dir="ltr"
-                style={{ unicodeBidi: "plaintext", textAlign: "left" }}
                 className={cn(
-                  "whitespace-pre-wrap break-words [overflow-wrap:anywhere]",
                   isSelected ? "focus:outline-none focus:ring-0 pointer-events-auto" : "pointer-events-none"
                 )}
               >
@@ -319,6 +311,9 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             <h1
               contentEditable={isSelected}
               suppressContentEditableWarning
+              onInput={(e) => {
+                handleEditableInput("heading", e);
+              }}
               data-element-id={element.id}
               onFocus={handleEditableFocus}
               onBlur={(e) => {
@@ -329,10 +324,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
               onClick={(e) => {
                 if (isSelected) e.stopPropagation();
               }}
-              dir="ltr"
-              style={{ unicodeBidi: "plaintext", textAlign: "left" }}
               className={cn(
-                "text-4xl lg:text-6xl font-black text-gray-900 tracking-tight leading-none max-w-4xl whitespace-pre-wrap break-words [overflow-wrap:anywhere]",
+                "text-4xl lg:text-6xl font-black text-gray-900 tracking-tight leading-none max-w-4xl",
                 isSelected ? "focus:outline-none focus:ring-0 pointer-events-auto" : "pointer-events-none"
               )}
             >
@@ -354,6 +347,9 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             <p
               contentEditable={isSelected}
               suppressContentEditableWarning
+              onInput={(e) => {
+                handleEditableInput("paragraph", e);
+              }}
               data-element-id={element.id}
               onFocus={handleEditableFocus}
               onBlur={(e) => {
@@ -364,10 +360,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
               onClick={(e) => {
                 if (isSelected) e.stopPropagation();
               }}
-              dir="ltr"
-              style={{ unicodeBidi: "plaintext", textAlign: "left" }}
               className={cn(
-                "text-lg text-gray-600 max-w-2xl leading-relaxed whitespace-pre-wrap break-words [overflow-wrap:anywhere]",
+                "text-lg text-gray-600 max-w-2xl leading-relaxed",
                 isSelected ? "focus:outline-none focus:ring-0 pointer-events-auto" : "pointer-events-none"
               )}
             >
