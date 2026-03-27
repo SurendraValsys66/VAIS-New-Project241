@@ -555,25 +555,41 @@ export const ComponentRenderer: React.FC<RendererProps> = ({
     case "video": {
       const videoSource = component.videoUrl || component.props?.videoUrl || component.props?.src;
 
+      // Determine video MIME type based on file extension or data URL
+      const getVideoType = (src: string) => {
+        if (!src) return "video/mp4";
+        if (src.startsWith("data:")) {
+          const match = src.match(/data:([^;]+)/);
+          return match ? match[1] : "video/mp4";
+        }
+        if (src.endsWith(".webm")) return "video/webm";
+        if (src.endsWith(".ogg")) return "video/ogg";
+        if (src.endsWith(".mov")) return "video/quicktime";
+        return "video/mp4";
+      };
+
+      const isValidVideoSource = videoSource && videoSource.trim().length > 0;
+
       return wrapWithControls(
         <div className="p-4 h-full" style={getComponentStyles()}>
-          {videoSource ? (
+          {isValidVideoSource ? (
             <div className="h-full aspect-video overflow-hidden rounded-2xl bg-black shadow-xl">
               <video
+                key={videoSource}
                 className="h-full w-full object-contain"
                 controls
                 playsInline
-                preload="metadata"
+                preload="none"
               >
-                <source src={videoSource} />
+                <source src={videoSource} type={getVideoType(videoSource)} />
                 Your browser does not support the video tag.
               </video>
             </div>
           ) : (
-            <div className="h-full aspect-video bg-black/90 flex items-center justify-center rounded-2xl shadow-xl overflow-hidden relative group/video">
-              <Play className="w-16 h-16 text-white opacity-50 group-hover/video:opacity-100 transition-opacity" />
-              <div className="absolute bottom-4 left-4 right-4 h-1 bg-white/20 rounded-full overflow-hidden">
-                <div className="w-1/3 h-full bg-valasys-orange" />
+            <div className="h-full aspect-video bg-black/90 flex items-center justify-center rounded-2xl shadow-xl overflow-hidden relative group/video cursor-pointer">
+              <div className="text-center">
+                <Play className="w-16 h-16 text-white opacity-50 group-hover/video:opacity-100 transition-opacity mb-3" />
+                <p className="text-sm text-white/70">Click to add video</p>
               </div>
             </div>
           )}
