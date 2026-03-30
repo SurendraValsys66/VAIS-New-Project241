@@ -439,7 +439,33 @@ export const BuilderCanvas: React.FC<BuilderCanvasProps> = ({ onBack, templateId
             component={selectedComponent}
             onUpdate={(updates) => {
               if (selectedComponentId) {
-                updateComponent(selectedComponentId, updates);
+                // Handle feature-grid feature content updates
+                if (selectedComponent?.type === "feature-grid" && selectedComponent?.selectedFeatureId) {
+                  const { featureIcon, featureTitle, featureDescription, ...otherUpdates } = updates as any;
+
+                  if (featureIcon !== undefined || featureTitle !== undefined || featureDescription !== undefined) {
+                    const features = selectedComponent.features || [];
+                    const updatedFeatures = features.map(feature =>
+                      feature.id === selectedComponent.selectedFeatureId
+                        ? {
+                            ...feature,
+                            ...(featureIcon !== undefined && { icon: featureIcon }),
+                            ...(featureTitle !== undefined && { title: featureTitle }),
+                            ...(featureDescription !== undefined && { description: featureDescription }),
+                          }
+                        : feature
+                    );
+
+                    updateComponent(selectedComponentId, {
+                      ...otherUpdates,
+                      features: updatedFeatures,
+                    });
+                  } else {
+                    updateComponent(selectedComponentId, updates);
+                  }
+                } else {
+                  updateComponent(selectedComponentId, updates);
+                }
               }
             }}
             onClose={() => setSelectedComponentId(null)}

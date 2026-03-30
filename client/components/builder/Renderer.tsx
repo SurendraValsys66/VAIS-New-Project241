@@ -691,16 +691,18 @@ export const ComponentRenderer: React.FC<RendererProps> = ({
             },
           }}
           onUpdate={(block) => {
-            onUpdate(component.id, {
+            const updates: any = {
               featureGridHeading: block.properties.heading,
               featureGridDescription: block.properties.description,
               featureGridColumns: block.properties.columns,
               features: block.properties.features,
-            });
+            };
+            onUpdate(component.id, updates);
           }}
           onSelect={(featureId) => {
             onUpdate(component.id, { selectedFeatureId: featureId });
           }}
+          selectedFeatureId={component.selectedFeatureId}
         />,
       );
 

@@ -73,6 +73,9 @@ interface StyleState {
   paragraphTextAlign: "left" | "center" | "right" | "justify";
   buttonTextAlign: "left" | "center" | "right" | "justify";
   selectedHeroElement?: string;
+  featureIcon?: string;
+  featureTitle?: string;
+  featureDescription?: string;
 }
 
 interface SpacingState {
@@ -194,6 +197,7 @@ export const ElementStylePanel: React.FC<ElementStylePanelProps> = ({
     spacing: true,
     borders: true,
     contentVisibility: true,
+    featureContent: true,
   });
 
   const [groupPaddingValues, setGroupPaddingValues] = React.useState(false);
@@ -254,6 +258,21 @@ export const ElementStylePanel: React.FC<ElementStylePanelProps> = ({
   React.useEffect(() => {
     if (component) {
       const props = component.props || {};
+
+      // Get selected feature data if this is a feature-grid
+      let featureIcon = "";
+      let featureTitle = "";
+      let featureDescription = "";
+
+      if (component.type === "feature-grid" && component.selectedFeatureId && Array.isArray(component.features)) {
+        const selectedFeature = component.features.find((f: any) => f.id === component.selectedFeatureId);
+        if (selectedFeature) {
+          featureIcon = selectedFeature.icon || "";
+          featureTitle = selectedFeature.title || "";
+          featureDescription = selectedFeature.description || "";
+        }
+      }
+
       setStyles({
         backgroundColor: component.backgroundColor || props.backgroundColor || "#ffffff",
         textColor: component.textColor || props.textColor || "#000000",
@@ -316,6 +335,9 @@ export const ElementStylePanel: React.FC<ElementStylePanelProps> = ({
         paragraphTextAlign: component.paragraphTextAlign || "left",
         buttonTextAlign: component.buttonTextAlign || "left",
         selectedHeroElement: component.selectedHeroElement || "",
+        featureIcon,
+        featureTitle,
+        featureDescription,
       });
 
       // Initialize units from component
@@ -353,6 +375,8 @@ export const ElementStylePanel: React.FC<ElementStylePanelProps> = ({
     component?.buttonFontSizeUnit,
     component?.buttonTextAlign,
     component?.selectedHeroElement,
+    component?.selectedFeatureId,
+    component?.features,
     clampPercentWidth,
   ]);
 
@@ -1884,6 +1908,56 @@ export const ElementStylePanel: React.FC<ElementStylePanelProps> = ({
             </div>
           )}
         </div>
+
+        {/* Feature Grid Content Section */}
+        {component?.type === "feature-grid" && component?.selectedFeatureId && (
+          <div>
+            <SectionHeader title="Feature Content" section="featureContent" />
+            {expandedSections.featureContent && (
+              <div className="px-4 py-3 space-y-4 bg-gray-50">
+                <div>
+                  <label className="text-xs font-semibold text-gray-700 block mb-2">
+                    Feature Number / Icon
+                  </label>
+                  <Input
+                    type="text"
+                    value={styles.featureIcon || ""}
+                    onChange={(e) => handleStyleChange("featureIcon", e.target.value)}
+                    placeholder="01, 02, 03 or icon text"
+                    maxLength={2}
+                    className="text-xs h-8"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-xs font-semibold text-gray-700 block mb-2">
+                    Feature Heading
+                  </label>
+                  <Input
+                    type="text"
+                    value={styles.featureTitle || ""}
+                    onChange={(e) => handleStyleChange("featureTitle", e.target.value)}
+                    placeholder="Enter feature title"
+                    className="text-xs h-8"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-xs font-semibold text-gray-700 block mb-2">
+                    Feature Description
+                  </label>
+                  <textarea
+                    value={styles.featureDescription || ""}
+                    onChange={(e) => handleStyleChange("featureDescription", e.target.value)}
+                    placeholder="Enter feature description"
+                    className="w-full text-xs border border-gray-300 rounded px-2 py-2 focus:outline-none focus:ring-1 focus:ring-blue-400 resize-none"
+                    rows={3}
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

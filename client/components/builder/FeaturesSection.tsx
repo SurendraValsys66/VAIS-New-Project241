@@ -10,6 +10,7 @@ interface FeaturesSectionProps {
   block: LandingPageBlock;
   onUpdate: (block: LandingPageBlock) => void;
   onSelect?: (featureId: string | null) => void;
+  selectedFeatureId?: string | null;
 }
 
 interface Feature {
@@ -25,7 +26,11 @@ export const FeaturesSection: React.FC<FeaturesSectionProps> = ({
   onSelect,
 }) => {
   const [selectedFeatureId, setSelectedFeatureId] = React.useState<string | null>(null);
-  const [hoveredFeatureId, setHoveredFeatureId] = React.useState<string | null>(null);
+  const [hoveredCardId, setHoveredCardId] = React.useState<string | null>(null);
+  const [hoveredElement, setHoveredElement] = React.useState<{
+    featureId: string;
+    element: "icon" | "title" | "description";
+  } | null>(null);
   const [editingFeatureId, setEditingFeatureId] = React.useState<string | null>(null);
 
   const features: Feature[] = (block.properties.features || []) as Feature[];
@@ -151,7 +156,9 @@ export const FeaturesSection: React.FC<FeaturesSectionProps> = ({
   };
 
   const isSelected = (featureId: string) => selectedFeatureId === featureId;
-  const isHovered = (featureId: string) => hoveredFeatureId === featureId;
+  const isCardHovered = (featureId: string) => hoveredCardId === featureId;
+  const isElementHovered = (featureId: string, element: "icon" | "title" | "description") =>
+    hoveredElement?.featureId === featureId && hoveredElement?.element === element;
 
   return (
     <div className="relative w-full overflow-hidden bg-white p-8 rounded-3xl border border-gray-100">
@@ -191,15 +198,15 @@ export const FeaturesSection: React.FC<FeaturesSectionProps> = ({
             <div
               key={feature.id}
               className={cn(
-                "relative group transition-all rounded-lg p-4 cursor-pointer",
+                "relative group transition-all rounded-lg p-4",
                 isSelected(feature.id)
                   ? "border-2 border-solid border-valasys-orange bg-valasys-orange/5 shadow-lg shadow-valasys-orange/20"
-                  : isHovered(feature.id)
+                  : isCardHovered(feature.id)
                   ? "border-2 border-dashed border-valasys-orange bg-gray-50"
-                  : "border-2 border-transparent hover:border-2 hover:border-dashed hover:border-valasys-orange hover:bg-gray-50"
+                  : "border-2 border-transparent"
               )}
-              onMouseEnter={() => setHoveredFeatureId(feature.id)}
-              onMouseLeave={() => setHoveredFeatureId(null)}
+              onMouseEnter={() => setHoveredCardId(feature.id)}
+              onMouseLeave={() => setHoveredCardId(null)}
               onClick={(e) => {
                 e.stopPropagation();
                 const newSelectedId = selectedFeatureId === feature.id ? null : feature.id;
@@ -209,13 +216,20 @@ export const FeaturesSection: React.FC<FeaturesSectionProps> = ({
             >
               {/* Icon */}
               <div
-                className="text-4xl mb-4 cursor-text"
+                className={cn(
+                  "text-4xl mb-4 cursor-text p-2 rounded transition-all",
+                  isElementHovered(feature.id, "icon")
+                    ? "border-2 border-dashed border-valasys-orange bg-gray-50"
+                    : "border-2 border-transparent"
+                )}
                 onClick={(e) => {
                   e.stopPropagation();
                   if (isSelected(feature.id)) {
                     setEditingFeatureId(feature.id);
                   }
                 }}
+                onMouseEnter={() => setHoveredElement({ featureId: feature.id, element: "icon" })}
+                onMouseLeave={() => setHoveredElement(null)}
               >
                 {isSelected(feature.id) && editingFeatureId === feature.id ? (
                   <Input
@@ -248,8 +262,10 @@ export const FeaturesSection: React.FC<FeaturesSectionProps> = ({
               ) : (
                 <h3
                   className={cn(
-                    "text-lg font-semibold text-gray-900 mb-2 cursor-text",
-                    isSelected(feature.id) && "opacity-70 hover:opacity-100"
+                    "text-lg font-semibold text-gray-900 mb-2 cursor-text p-2 rounded transition-all",
+                    isElementHovered(feature.id, "title")
+                      ? "border-2 border-dashed border-valasys-orange bg-gray-50"
+                      : "border-2 border-transparent"
                   )}
                   onClick={(e) => {
                     e.stopPropagation();
@@ -257,6 +273,8 @@ export const FeaturesSection: React.FC<FeaturesSectionProps> = ({
                       setEditingFeatureId(feature.id);
                     }
                   }}
+                  onMouseEnter={() => setHoveredElement({ featureId: feature.id, element: "title" })}
+                  onMouseLeave={() => setHoveredElement(null)}
                 >
                   {feature.title}
                 </h3>
@@ -278,8 +296,10 @@ export const FeaturesSection: React.FC<FeaturesSectionProps> = ({
               ) : (
                 <p
                   className={cn(
-                    "text-sm text-gray-600 cursor-text",
-                    isSelected(feature.id) && "opacity-70 hover:opacity-100"
+                    "text-sm text-gray-600 cursor-text p-2 rounded transition-all",
+                    isElementHovered(feature.id, "description")
+                      ? "border-2 border-dashed border-valasys-orange bg-gray-50"
+                      : "border-2 border-transparent"
                   )}
                   onClick={(e) => {
                     e.stopPropagation();
@@ -287,6 +307,8 @@ export const FeaturesSection: React.FC<FeaturesSectionProps> = ({
                       setEditingFeatureId(feature.id);
                     }
                   }}
+                  onMouseEnter={() => setHoveredElement({ featureId: feature.id, element: "description" })}
+                  onMouseLeave={() => setHoveredElement(null)}
                 >
                   {feature.description}
                 </p>
