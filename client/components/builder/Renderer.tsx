@@ -746,7 +746,12 @@ export const ComponentRenderer: React.FC<RendererProps> = ({
                     : "2px solid transparent",
               }}
             >
-              <h2 className="text-2xl font-black" contentEditable suppressContentEditableWarning>
+              <h2
+                className="text-2xl font-black focus:outline-none focus:ring-0"
+                contentEditable
+                suppressContentEditableWarning
+                style={{ outline: "none", boxShadow: "none", border: "none" }}
+              >
                 Simple, transparent pricing
               </h2>
             </div>
@@ -768,7 +773,12 @@ export const ComponentRenderer: React.FC<RendererProps> = ({
                     : "2px solid transparent",
               }}
             >
-              <p className="text-gray-500" contentEditable suppressContentEditableWarning>
+              <p
+                className="text-gray-500 focus:outline-none focus:ring-0"
+                contentEditable
+                suppressContentEditableWarning
+                style={{ outline: "none", boxShadow: "none", border: "none" }}
+              >
                 Choose the plan that's right for you.
               </p>
             </div>
